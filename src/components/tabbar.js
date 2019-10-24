@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
-import {BrowserRouter, Route, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
-import Achievements from './achievements';
+// import Achievements from './achievements';
 
 class TabBar extends Component {
     render() {
