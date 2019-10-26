@@ -1,115 +1,115 @@
 import React, {Component} from 'react';
 
-function wait(ms){
-    var start = new Date().getTime();
-    var end = start;
-    while(end < start + ms) {
-        end = new Date().getTime();
-    }
-}
+// function wait(ms){
+//     var start = new Date().getTime();
+//     var end = start;
+//     while(end < start + ms) {
+//         end = new Date().getTime();
+//     }
+// }
 
-function takeFirst(achiIds, t) {
+// function takeFirst(achiIds, t) {
 
-    let guy = [];
-    let sth = [];
+//     let guy = [];
+//     let sth = [];
     
-    for(let j = 0; j < Math.ceil(achiIds.length/t); j++) {
-        sth = [];
-        for(var i = 0; i < t; i++) {
-            if(achiIds[(j * t) + i] === undefined) {
-                break;
-            }
-            fetch("https://api.guildwars2.com/v2/achievements/"+achiIds[(j * t) + i])
-            .then(res => res.json())
-            .then(
-                (data) => console.log(data)
-            );
-        }
-        console.log(sth);
-        wait(5000);
-    }
+//     for(let j = 0; j < Math.ceil(achiIds.length/t); j++) {
+//         sth = [];
+//         for(var i = 0; i < t; i++) {
+//             if(achiIds[(j * t) + i] === undefined) {
+//                 break;
+//             }
+//             fetch("https://api.guildwars2.com/v2/achievements/"+achiIds[(j * t) + i])
+//             .then(res => res.json())
+//             .then(
+//                 (data) => console.log(data)
+//             );
+//         }
+//         console.log(sth);
+//         wait(5000);
+//     }
 
-}
+// }
 
-let ar = [1,2,3,4,5,6];
+// let ar = [1,2,3,4,5,6];
 
-takeFirst(ar, 5);
+// takeFirst(ar, 5);
 
 class Achievements extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            url: 'https://api.guildwars2.com/v2/achievements',
             error: null,
             isLoaded: false,
-            items: []
+            achievements: []
         };
     }
     
     componentDidMount() {
-        fetch("https://api.guildwars2.com/v2/achievements")
+        fetch(this.state.url)
         .then(res => res.json())
         .then(
             (result) => {
-            this.setState({
-                isLoaded: true,
-                items: result.map(item => ({id: item}))
-            });
+                var achis = result;
+
+                const count = achis.length;
+                const pages = Math.ceil(count/200);
+                console.log("pages: "+pages);
+
+                if(achis.length > 200) {
+                    for(var i = 0; i < pages; i++) {
+                        var page = achis.slice(0+i*200, 200+i*200);
+                        fetch(this.state.url + "?ids=" + page)
+                        .then(res => res.json())
+                        .then(
+                            (data) => {
+                                this.setState({
+                                    achievements: this.state.achievements.concat(data),
+                                    isLoaded: true
+                                });
+                                console.log(this.state.achievements)
+                            }
+                        )
+                    }
+                }
             },
-            // Note: it's important to handle errors here
-            // instead of a catch() block so that we don't swallow
-            // exceptions from actual bugs in components.
             (error) => {
-            this.setState({
-                isLoaded: true,
-                error
-            });
+                this.setState({
+                    isLoaded: true,
+                    error
+                });
             }
         )
-        // .then(
-        //     (data) => {
-        //         data.map(
-        //             item => {
-        //                 fetch("http://api.guildwars2.com/v2/achievements/" + item)
-        //                 .then(res => res.json())
-        //                 .then(
-        //                     (result) => {
-        //                         this.state.items.push(result);
-        //                     },
-        //                     this.setState({
-        //                         isLoaded: true
-        //                     })
-        //                 )   
-        //         });
-        //     },
-        //     (error) => {
-        //         this.setState({
-        //             isLoaded: true,
-        //             error
-        //         });
-        //     }
-        // )
     }
   
     render() {
-        const { error, isLoaded, items } = this.state;
+        const { error, isLoaded, achievements } = this.state;
         if (error) {
-            return <div>Error: {error.message}</div>;
-        } else if (!isLoaded) {
-            return <div>Loading...</div>;
-        } else {
+            return <div className="row col-12">Error: {error.message}</div>;
+        }
+        else if (!isLoaded) {
+            return <div className="row col-12">Loading...</div>;
+        }
+        else {
             return (
-                <div>
-                    <ul>
-                        {items.map(item => (
-                        <li key={item.id}>
-                            {item.id}
-                        </li>
+                <div className="row col-12">
+                        {achievements.map(achi => (
+                        <div key={achi.id} className="col-3">
+
+                        <img src={achi.icon} />
+
+                        {achi.flags.map(function(f){
+                            if(f !== "IgnoreNearlyComplete" && f !== "Hidden" && f !== "RepairOnLogin" && f !== "RequiresUnlock" && f !== "MoveToTop" && f !== "CategoryDisplay"){
+                                return <span className="text-primary">{f} </span>;
+                            }
+                        })} {achi.name}
+                        </div>
                         ))}
-                    </ul>
                 </div>
             );
         }
-        }
-  }
+    }
+}
 
   export default Achievements;

@@ -1,3 +1,5 @@
+import 'bootstrap/dist/css/bootstrap.css';
+
 import React, {Component} from 'react';
 import {BrowserRouter, Route} from 'react-router-dom';
 import './App.css';
