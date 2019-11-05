@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 
+import {Row, Col, ListGroup, Container, Image, Modal, Button} from 'react-bootstrap';
+
 class Achievements extends Component {
     constructor(props) {
         super(props);
@@ -8,42 +10,77 @@ class Achievements extends Component {
             error: null,
             isLoaded: false,
             categories: [],
-            achievements: []
+            achievements: [],
+            currentCat: 1,
+            currentAchi: null,
+            showModal: false,
         };
+        this.changeCat = this.changeCat.bind(this);
+        this.changeAchi = this.changeAchi.bind(this);
+        this.getAchiIds = this.getAchiIds.bind(this);
+        this.setModalShow = this.setModalShow.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.handleShow = this.handleShow.bind(this);
+    }
+
+    // FUNCTION TO CHANGE CURRENT CAT ID
+    // CALLED BY CLICKING ON CATEGORY
+    // TRIGGERS UPDATE OF COMPONENT
+    changeCat(id) {
+        this.setState({
+            currentCat: id
+        });
+        // console.log(this.state.currentCat);
+    }
+
+    changeAchi(id) {
+        this.setState({
+            currentAchi: id
+        });
+        // console.log(this.state.currentAchi);
     }
     
+    // FUNCTION TO RETRIEVE ARRAY OF ACHI IDS OF CURRENT CAT
+    // CALLED WITHIN FETCH() FOR CURRENT CATEGORY'S ACHIEVEMENTS
+    getAchiIds() {
+        let cat = this.state.categories.find(cat => cat.id === this.state.currentCat);
+        let achis = cat.achievements;
+        
+        return achis;
+    }
+
+    setModalShow(bool) {
+        this.setState({
+            showModal: bool
+        })
+    }
+
+    handleClose() {
+        this.setModalShow(false);
+    }
+
+    handleShow() {
+        this.setModalShow(true);
+    }
+
     componentDidMount() {
-        // GET ACHIEVEMENT IDS FROM API
-        fetch(this.state.url)
+        // GET CATEGORY IDS FROM API
+        fetch(this.state.url + "/categories")
         .then(res => res.json())
         .then(
             (result) => {
-                var achis = result;
-                const count = achis.length;
-
-                // AMOUNT OF API CALLS NECESSARY
-                const pages = Math.ceil(count/200);
-
-                // Max number of items for "ids" parameter is 200, and if there is more than that
-                // several API calls must be made
-                if(achis.length > 200) {
-                    // LOOP THROUGH ID ARRAY, SLICING IT EVERY 200 ITEMS
-                    for(var i = 0; i < pages; i++) {
-                        var page = achis.slice(0+i*200, 200+i*200);
-                        // GET ACHIEVEMENT OBJECTS CORRESPONDING TO PART OF ID ARRAY FROM API
-                        fetch(this.state.url + "?ids=" + page)
-                        .then(res => res.json())
-                        .then(
-                            (data) => {
-                                // CONCATENATE EACH SECTION TO THE ACHIEVEMENTS ARRAY WITHIN STATE
-                                this.setState({
-                                    achievements: this.state.achievements.concat(data),
-                                    isLoaded: true
-                                });
-                            }
-                        )
+                // GET CATEGORY OBJECTS
+                fetch(this.state.url + "/categories?ids=" + result)
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        // SAVE CAT. OBJECTS TO STATE
+                        this.setState({
+                            categories: result,
+                            isLoaded: true
+                        })
                     }
-                }
+                )
             },
             (error) => {
                 this.setState({
@@ -52,90 +89,115 @@ class Achievements extends Component {
                 });
             }
         )
-        // GET CATEGORY IDS FROM API
+    }
+
+    componentDidUpdate() {
+        // GET CURRENT CATEGORY'S ACHIEVEMENTS' IDS
+        fetch(this.state.url + "?ids=" + this.getAchiIds())
+        .then(res => res.json())
         .then(
-            // Not checking if more than 200, because I know there's exactly 199
-            fetch(this.state.url + "/categories")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    // GET CATEGORY OBJECTS BY REF IDs
-                    fetch(this.state.url + "/categories?ids=" + result)
-                    .then(res => res.json())
-                    .then(
-                        (allcats) => {
-                            // SAVE CATEGORY OBJECTS
-                            this.setState({
-                                categories: allcats
-                            })
-                            // LOOP THROUGH CATEGORIES ARRAY TO
-                            // GET EACH CATEGORY'S SUBARRAY WITH BELONGING ACHIEVEMENTS' IDS
-                            // AND LOOP THROUGH ACHIEVEMENTS ARRAYS WITHIN TO
-                            // ASSIGN EACH ACHIEVEMENT OBJECT OF STATE'S ACHI. ARRAY A "CATEGORY" PROPERTY
-                            // WITH THE CORRESPONDING CAT. ID
-                            this.state.categories.map(
-                                cat => cat.achievements.map(
-                                    achiId => this.state.achievements.map(
-                                        achi => {
-                                            if(achi.id === achiId) {
-                                                achi.category = cat.id;
-                                            }
-                                        }
-                                    )
-                                )
-                            );
-                            console.log(this.state.achievements);
-                        }
-                    )
-                    
-                }
-            )
+            (result) => {
+                // SAVE ACHIEVEMENTS OF CURRENT CATEGORY IN STATE
+                this.setState({
+                    achievements: result,
+                    isLoaded: true
+                })
+                
+            },
+            (error) => {
+                this.setState({
+                    isLoaded: true,
+                    error
+                });
+            }
         )
     }
   
     render() {
-        const { error, isLoaded, achievements, categories } = this.state;
+        // GET ARRAYS FROM STATE
+        const { error, isLoaded, achievements, categories, currentCat, currentAchi, showModal } = this.state;
+        
+        // DISPLAY ERROR IF THERE IS ANY
         if (error) {
             return <div className="row col-12">Error: {error.message}</div>;
         }
+        // BEFORE DATA IS LOADED 
         else if (!isLoaded) {
             return <div className="row col-12">Loading...</div>;
         }
-        else {
+        // DISPLAY DATA IF ISLOADED IS SET TO TRUE
+        else if(achievements.length > 0) {
+            const catObj = categories.find(cat => cat.id === currentCat);
+            // console.log(achievements)
+            const achiObj = achievements.find(achi => achi.id === currentAchi);
+
             return (
-                <div className="row col-12">
-                        {/* {achievements.map(achi => (
-                        <div key={achi.id} className="col-4">
-                            {achi.icon !== undefined ? 
-                                <img alt="Special Icon" src={achi.icon} /> : 
-                                ""
-                            }
-
-                            {achi.flags.map(function(f){
-                                if(f !== "IgnoreNearlyComplete" && f !== "Hidden" && f !== "RepairOnLogin" && f !== "RequiresUnlock" && f !== "MoveToTop" && f !== "CategoryDisplay"){
-                                    return <span key={f} className="text-primary">{f} </span>;
+                <Container className="my-3">
+                    {achiObj !== undefined ?
+                    <Modal centered show={showModal} onHide={this.handleClose} animation={false}>
+                        <Modal.Header closeButton>
+                        <Modal.Title>{achiObj.name}</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>{achiObj.description}</Modal.Body>
+                        <Modal.Footer>
+                        <Button variant="outline-primary" onClick={this.handleClose}>
+                            Close
+                        </Button>
+                        </Modal.Footer>
+                    </Modal>
+                    :
+                    ""}
+                    <Row>
+                        <Col md={4}>
+                            <ListGroup className="d-flex flex-row flex-wrap">
+                                {// MAP THROUGH CATEGORIES ARRAY AND DISPLAY DATA
+                                categories.map(cat => (
+                                    // DO NOT DISPLAY SEASONAL CATEGORIES
+                                    // WITH NO ACHIEVEMENTS IN ARRAY (API CALL WILL HAVE NO ID REF)
+                                    cat.achievements.length > 0 ?
+                                    <ListGroup.Item action key={cat.id} id={cat.id} className="col-md-12" onClick={() => this.changeCat(cat.id)}>
+                                        <Row className="h-100">
+                                            <Col md={3} className="my-auto"><Image src={cat.icon} /></Col>
+                                            <Col md={9} className="my-auto">
+                                                <div>{cat.name}</div>
+                                            </Col>
+                                        </Row>
+                                    </ListGroup.Item>
+                                    : ""
+                                ))
                                 }
-                                else return null;
-                            })} {achi.name}
-                        </div>
-                        ))} */}
-
-                        {
-                            categories.map(
-                                cat => (
-                                    <div key={cat.id} className="col-4">
-                                        
-                                        {cat.name} {cat.achievements.map(
-                                            id => " " + id
-                                        )}
-                                    </div>
-                                )
-                            )
-                        }
-                </div>
+                            </ListGroup>
+                        </Col>
+                        <Col md={8}>
+                            <ListGroup className="d-flex flex-row flex-wrap">
+                                {achievements.map(achi => (
+                                    <ListGroup.Item 
+                                        action key={achi.id} 
+                                        className="col-md-6" 
+                                        onClick={(event) => { this.handleShow(); this.changeAchi(achi.id);}}
+                                    >
+                                        <Row className="h-100">
+                                            <Col md={3} className="my-auto">
+                                                {achi.hasOwnProperty('icon') ?
+                                                <Image src={achi.icon} />
+                                                :
+                                                <Image src={catObj.icon} />
+                                                }
+                                            </Col>
+                                            <Col md={9} className="my-auto">{achi.name}</Col>
+                                        </Row>
+                                    </ListGroup.Item>
+                                ))}
+                            </ListGroup>
+                        </Col>
+                    </Row>
+                </Container>
             );
+        }
+        else {
+            return <div className="row col-12">Loading...</div>;
         }
     }
 }
 
-  export default Achievements;
+export default Achievements;
