@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Row, Col, ListGroup, Container, Image, Modal, Button, ProgressBar} from 'react-bootstrap';
+import {Row, Col, Container, ProgressBar} from 'react-bootstrap';
 
 import Achievements from './achievements';
 import AchiCategories from './achi_categories';
@@ -9,7 +9,6 @@ class AchievementsPage extends Component {
         super(props);
         this.state = {
             url: 'https://api.guildwars2.com/v2/achievements',
-            error: null,
             category: null,
         };
         // this.changeCat = this.changeCat.bind(this);
@@ -47,21 +46,8 @@ class AchievementsPage extends Component {
   
     render() {
         // GET PROPERTIES FROM STATE
-        const {error} = this.state;
         let {category} = this.state;
         
-        // DISPLAY ERROR IF THERE IS ANY
-        if (error) {
-            return (
-                <Container>
-                    <Row>
-                        <Col md={12}>
-                            Error: {error.message}
-                        </Col>
-                    </Row>
-                </Container>
-            );
-        }
         if(category === null) {
             return (
                 <Container className="my-3">

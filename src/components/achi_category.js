@@ -13,7 +13,7 @@ class AchiCategory extends Component {
                 <Row className="h-100">
                     <Col md={3} className="my-auto"><Image src={this.props.cat.icon} /></Col>
                     <Col md={9} className="my-auto">
-                        <div>{this.props.cat.name}</div>
+                        {this.props.cat.name}
                     </Col>
                 </Row>
             </ListGroup.Item>

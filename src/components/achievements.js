@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Container, Row, Col, ProgressBar, ListGroup, Modal, Button} from 'react-bootstrap';
+import {Row, Col, ProgressBar, ListGroup, Modal, Button} from 'react-bootstrap';
 
 import Achievement from './achievement';
 
@@ -47,31 +47,28 @@ class Achievements extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            category: this.props.category
-        });
-    }
-
-    componentDidUpdate() {
-        fetch(this.state.url + this.state.category.achievements)
-        .then(res => res.json())
-        .then(
-            (result) => {
-                this.setState({
-                    achievements: result
-                });
-            },
-            (error) => {
-                this.setState({
-                    error
-                })
-            }
-        )
+        if(this.props.category !== null) {
+            fetch(this.state.url + this.props.category.achievements)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        achievements: result
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        error
+                    })
+                }
+            )
+            console.log(this.state.achievements);
+        }
     }
 
     render() {
         // GET PROPERTIES FROM STATE
-        const { achievements, category, currentAchi, showModal, error } = this.state;
+        let { achievements, category, currentAchi, showModal, error } = this.state;
         
         // DISPLAY ERROR IF THERE IS ANY
         if (error) {
@@ -85,12 +82,12 @@ class Achievements extends Component {
                 </>
             );
         }
-        else if (!achievements.length > 0) {
+        else if (achievements.length === 0) {
             return (
                 <>
                     <Row>
                         <Col>
-                            <ProgressBar animated now={90} label={"Loading..."}/>
+                            <ProgressBar animated now={90} label={"Loading Achievements..."}/>
                         </Col>
                     </Row>
                 </>
@@ -122,7 +119,7 @@ class Achievements extends Component {
                         {achievements.map(achi => (
                             <Achievement 
                                 key={achi.id}
-                                category={category}
+                                category={this.props.category}
                                 achi={achi}
                                 handleClose={this.handleClose}
                                 handleShow={this.handleShow}
