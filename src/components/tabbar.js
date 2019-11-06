@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import {Navbar, Nav, /*NavDropdown, */ Form, FormControl, Button} from 'react-bootstrap';
+import {Navbar, Nav, /*NavDropdown, */ Form, FormControl, Button, Image} from 'react-bootstrap';
 
 // import Achievements from './achievements';
 
@@ -8,7 +8,11 @@ class TabBar extends Component {
     render() {
         return (
             <Navbar bg="light" expand="lg">
-                <Navbar.Brand href="#home">Guild Wars 2 API</Navbar.Brand>
+                <Navbar.Brand>
+                    <Link to="/" className="nav-link">
+                        <Image src="https://wiki.guildwars2.com/images/d/df/GW2Logo_new.png" style={{width: 2.5 + 'rem'}} /> Guild Wars 2 API
+                    </Link>
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">

@@ -5,7 +5,7 @@ import {BrowserRouter, Route} from 'react-router-dom';
 import './App.css';
 
 import TabBar from './components/tabbar';
-import Achievements from './components/achievements';
+import AchievementsPage from './components/achievements_page';
 import Home from './components/home';
 
 class App extends Component {
@@ -14,7 +14,7 @@ class App extends Component {
             <BrowserRouter>
               <TabBar/>  
               <Route exact path="/" component={Home}/>
-              <Route path="/achievements" component={Achievements}/>
+              <Route path="/achievements" component={AchievementsPage}/>
             </BrowserRouter>
         );
     }
