@@ -52,14 +52,15 @@ class AchievementsPage extends Component {
             return (
                 <Container className="my-3">
                     <Row>
-                        <Col md={4}>
+                        <Col md={4} className="scrollable">
                             <AchiCategories 
                                 changeCat={this.changeCat}
                                 setCat={this.setCat}
                             />
                             
                         </Col>
-                        <Col md={8}>
+                        <Col md={8} className="text-center">
+                            <h3>Select an achievement category.</h3>
                         </Col>
                     </Row>
                 </Container>
@@ -71,15 +72,15 @@ class AchievementsPage extends Component {
             category = this.state.category;
             return (
                 <Container className="my-3">
-                    <Row>
-                        <Col md={4}>
+                    <Row className="height-100">
+                        <Col xs={5} md={4} className="scrollable">
                             <AchiCategories 
                                 changeCat={this.changeCat}
                                 setCat={this.setCat}
                             />
                             
                         </Col>
-                        <Col md={8}>
+                        <Col xs={7} md={8} className="scrollable">
                             <Achievements
                                 category={this.state.category}
                             />

@@ -3,6 +3,7 @@ import {ListGroup, Image, Row, Col} from 'react-bootstrap';
 
 class Achievement extends Component {
     render() {
+        console.log(this.props.achi)
         return (
             <ListGroup.Item 
                 action key={this.props.achi.id} 
@@ -10,14 +11,16 @@ class Achievement extends Component {
                 onClick={(event) => { this.props.handleShow(this.props.achi.id);}}
             >
                 <Row className="h-100">
-                    <Col md={3} className="my-auto">
+                    <Col xs={5} xl={3} className="my-auto">
                         {this.props.achi.hasOwnProperty('icon') ?
                         <Image src={this.props.achi.icon} />
                         :
                         <Image src={this.props.category.icon} />
                         }
                     </Col>
-                    <Col md={9} className="my-auto">{this.props.achi.name}</Col>
+                    <Col xs={7} xl={9} className="my-auto">
+                        <Row>{this.props.achi.name}</Row>
+                    </Col>
                 </Row>
             </ListGroup.Item>
         )

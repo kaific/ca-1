@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Row, Col, ProgressBar, ListGroup, Modal, Button} from 'react-bootstrap';
 
 import Achievement from './achievement';
+import equal from 'fast-deep-equal';
 
 class Achievements extends Component {
     constructor(props) {
@@ -12,7 +13,6 @@ class Achievements extends Component {
             achievements: [],
             error: null,
             currentAchi: null,
-            category: null,
             showModal: false,
         };
 
@@ -26,19 +26,21 @@ class Achievements extends Component {
         this.setState({
             category: cat
         });
-        // console.log(this.state.currentCat);
     }
-
+    
+    // CONTROL SHOW STATE OF ACHIEVEMENT INFO WINDOW
     setModalShow(bool) {
         this.setState({
             showModal: bool
         })
     }
 
+    // CLOSE ACHIEVEMENT INFO WINDOW
     handleClose() {
         this.setModalShow(false);
     }
 
+    // SHOW ACHIEVEMENT INFO WINDOW
     handleShow(id) {
         this.setModalShow(true);
         this.setState({
@@ -46,29 +48,49 @@ class Achievements extends Component {
         });
     }
 
+    // API CALL MUST BE EXECUTED VIA FUNCTION FOR USE IN COMPONENTDIDUPDATE()
+    // (OTHERWISE INFINITE LOOP WTIH SETSTATE)
+    fetchAchievements(){
+        fetch(this.state.url + this.props.category.achievements)
+        .then(res => res.json())
+        .then(
+            (result) => {
+                this.setState({
+                    achievements: result
+                });
+            },
+            (error) => {
+                this.setState({
+                    error
+                })
+            }
+        )
+        console.log(this.state.achievements);
+    }
+
+
+
     componentDidMount() {
         if(this.props.category !== null) {
-            fetch(this.state.url + this.props.category.achievements)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({
-                        achievements: result
-                    });
-                },
-                (error) => {
-                    this.setState({
-                        error
-                    })
-                }
-            )
-            console.log(this.state.achievements);
+            this.fetchAchievements();
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        // CHECK FOR CHANGE IN CATEGORY PROP
+        if(this.props.category !== null) {
+            // IF PROP CHANGED, RE-FETCH ACHIEVEMENTS
+            // USES fast-deep-equal
+            // SOURCE: https://stackoverflow.com/questions/37009328/re-render-react-component-when-prop-changes
+            if(!equal(this.props.category, prevProps.category)) {
+                this.fetchAchievements();
+            }
         }
     }
 
     render() {
         // GET PROPERTIES FROM STATE
-        let { achievements, category, currentAchi, showModal, error } = this.state;
+        let { achievements, currentAchi, showModal, error } = this.state;
         
         // DISPLAY ERROR IF THERE IS ANY
         if (error) {
@@ -99,7 +121,7 @@ class Achievements extends Component {
             const achiObj = achievements.find(achi => achi.id === currentAchi);
             return (
                 <>
-                    {// CREATE MODAL ONLY IF ACHIOBJ IS DEFINED, OTHERWISE ERROR ON FIRST TIME COMPONENT MOUNTS
+                    {// CREATE MODAL ONLY IF ACHIOBJ IS DEFINED, OTHERWISE ERROR ON FIRST TIME COMPONENT RENDERS
                     achiObj !== undefined ?
                     // DISPLAY ACHIEVEMENT INFO IN POP-UP
                     <Modal centered show={showModal} onHide={this.handleClose} animation={true}>

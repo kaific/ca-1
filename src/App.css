@@ -1,10 +1,22 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
 * {
+  font-family: 'Roboto', sans-serif;
   border-radius: 0 !important;
+}
+
+.bg-dark {
+  background: #3D0C08 !important;
 }
 
 .my-auto {
   margin-top: auto !important;
   margin-bottom: auto !important;
+}
+
+.scrollable {
+  height: 1000px;
+  overflow-y: scroll;
 }
 
 .list-group-item {
