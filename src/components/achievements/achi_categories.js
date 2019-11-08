@@ -48,6 +48,7 @@ class AchiCategories extends Component {
     componentDidMount() {
         // GET CATEGORY IDS FROM API
         fetch(this.state.url + "/categories")
+        // CONVERT RESPONSE TO JSON STRING
         .then(res => res.json())
         .then(
             (result) => {
@@ -72,6 +73,7 @@ class AchiCategories extends Component {
         )
         // FETCH CATEGORY GROUP IDS
         fetch(this.state.url + "/groups")
+        // CONVERT RESPONSE TO JSON STRING
         .then(res => res.json())
         .then(
             (result) => {
@@ -83,14 +85,13 @@ class AchiCategories extends Component {
                         let g = {};
                         result.map(group => {
                             let name = group.name;
-                            g[name] = false;
+                            return g[name] = false;
                         });
                         this.setState({
                             // UPDATE STATE AND SORT GROUPS BY 'ORDER' PROPERTY (AS THEY APPEAR IN THE GAME THIS API BELONGS TO)
                             groups: this.sortByKey(result, 'order'),
                             activeGroups: g
                         })
-                        console.log(this.state.activeGroups)
                     }
                 )
             }
@@ -119,14 +120,13 @@ class AchiCategories extends Component {
                 group.categoryObjs = [];
                 // MAP EACH CATEGORY, CHECK IF ITS ID IS FOUND IN CATEGORIES ARRAY
                 // OF GROUP, IF IT IS, ADD THE CATEGORY OBJECT TO "categoriesObj" ARRAY
-                categories.map(category => {
+                return categories.map(category => {
                     if(group.categories.includes(category.id)) {
-                        group.categoryObjs.push(category)
+                        return group.categoryObjs.push(category)
                     }
+                    else return null;
                 })
             });
-
-            console.log(groups);
 
             return (
                 <ListGroup className="d-flex flex-row flex-wrap">

@@ -3,12 +3,11 @@ import {ListGroup, Image, Row, Col} from 'react-bootstrap';
 
 class Achievement extends Component {
     render() {
-        console.log(this.props.achi)
         return (
             <ListGroup.Item 
                 action key={this.props.achi.id} 
                 className="col-md-6" 
-                onClick={(event) => { this.props.handleShow(this.props.achi.id);}}
+                onClick={() => { this.props.handleShow(this.props.achi.id);}}
             >
                 <Row className="h-100">
                     <Col xs={5} xl={3} className="my-auto">

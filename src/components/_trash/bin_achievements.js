@@ -1,8 +1,14 @@
 /* 
-    THIS DEPRECATED CODE I CUT OUT FROM THE ACHIEVEMENT COMPONENT
+ *
+ *
+ *  THIS IS DEPRECATED CODE I CUT OUT FROM THE ACHIEVEMENT COMPONENT
+ *  AND SAVED JUST IN CASE I'D NEED TO REFERENCE IT
+ *
+ *
+ *
 */
 
-var achis = result;
+let achis = result;
 const count = achis.length;
 
 // AMOUNT OF API CALLS NECESSARY
@@ -56,23 +62,23 @@ then(
 // ------
 
 // LOOP THROUGH CATEGORIES ARRAY TO
-        // GET EACH CATEGORY'S SUBARRAY WITH ITS ACHIEVEMENTS' IDS
-        // AND LOOP THROUGH ACHIEVEMENTS ARRAYS WITHIN TO
-        // ASSIGN EACH ACHIEVEMENT OBJECT OF A "CATEGORY" PROPERTY
-        // WITH THE CORRESPONDING CAT. ID
-        categories.map(
-            cat => cat.achievements.map(
-                achiId => achievements.map(
-                    achi => {
-                        if(achi.id === achiId) {
-                            achi.category = cat.id;
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
-                    }
-                )
-            )
-        );
-        console.log(categories);
+// GET EACH CATEGORY'S SUBARRAY WITH ITS ACHIEVEMENTS' IDS
+// AND LOOP THROUGH ACHIEVEMENTS ARRAYS WITHIN TO
+// ASSIGN EACH ACHIEVEMENT OBJECT OF A "CATEGORY" PROPERTY
+// WITH THE CORRESPONDING CAT. ID
+categories.map(
+    cat => cat.achievements.map(
+        achiId => achievements.map(
+            achi => {
+                if(achi.id === achiId) {
+                    achi.category = cat.id;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        )
+    )
+);
+console.log(categories);

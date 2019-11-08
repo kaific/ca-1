@@ -40,10 +40,6 @@ class AchievementsPage extends Component {
         });
     }
 
-    componentDidUpdate() {
-        console.log(this.state.category);
-    }
-  
     render() {
         // GET PROPERTIES FROM STATE
         let {category} = this.state;
@@ -52,14 +48,14 @@ class AchievementsPage extends Component {
             return (
                 <Container className="my-3">
                     <Row>
-                        <Col md={4} className="scrollable">
+                        <Col xs={5} md={4} className="scrollable">
                             <AchiCategories 
                                 changeCat={this.changeCat}
                                 setCat={this.setCat}
                             />
                             
                         </Col>
-                        <Col md={8} className="text-center">
+                        <Col xs={7} md={8} className="text-center">
                             <h3>Select an achievement category.</h3>
                         </Col>
                     </Row>
@@ -75,7 +71,6 @@ class AchievementsPage extends Component {
                     <Row className="height-100">
                         <Col xs={5} md={4} className="scrollable">
                             <AchiCategories 
-                                changeCat={this.changeCat}
                                 setCat={this.setCat}
                             />
                             

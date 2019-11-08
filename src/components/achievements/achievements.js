@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Row, Col, ProgressBar, ListGroup, Modal, Button} from 'react-bootstrap';
+import {Container, Row, Col, Image, ProgressBar, ListGroup, Modal, Button} from 'react-bootstrap';
 
 import Achievement from './achievement';
 import equal from 'fast-deep-equal';
@@ -52,6 +52,7 @@ class Achievements extends Component {
     // (OTHERWISE INFINITE LOOP WTIH SETSTATE)
     fetchAchievements(){
         fetch(this.state.url + this.props.category.achievements)
+        // CONVERT RESPONSE TO JSON STRING
         .then(res => res.json())
         .then(
             (result) => {
@@ -65,11 +66,7 @@ class Achievements extends Component {
                 })
             }
         )
-        console.log(this.state.achievements);
     }
-
-
-
     componentDidMount() {
         if(this.props.category !== null) {
             this.fetchAchievements();
@@ -80,7 +77,7 @@ class Achievements extends Component {
         // CHECK FOR CHANGE IN CATEGORY PROP
         if(this.props.category !== null) {
             // IF PROP CHANGED, RE-FETCH ACHIEVEMENTS
-            // USES fast-deep-equal
+            // USES fast-deep-equal to compare objects
             // SOURCE: https://stackoverflow.com/questions/37009328/re-render-react-component-when-prop-changes
             if(!equal(this.props.category, prevProps.category)) {
                 this.fetchAchievements();
@@ -128,7 +125,40 @@ class Achievements extends Component {
                         <Modal.Header closeButton>
                         <Modal.Title>{achiObj.name}</Modal.Title>
                         </Modal.Header>
-                        <Modal.Body>{achiObj.description}</Modal.Body>
+                        <Modal.Body>
+                            <Container>
+                                <Row className="show-grid">
+                                    <Col xs={2}>
+                                        <Image src={achiObj.hasOwnProperty('icon') ? achiObj.icon : this.props.category.icon}/>
+                                    </Col>
+                                    <Col xs={10}>
+                                        {achiObj.description !== "" ?
+                                        <Row>
+                                            <Col xs={4}>Description:</Col>
+                                            <Col xs={8}>{achiObj.description}</Col>
+                                        </Row>
+                                        : ""}
+                                        <Row>
+                                            <Col xs={4}>Requirement:</Col>
+                                            <Col xs={8}>{achiObj.requirement}</Col>
+                                        </Row>
+                                        {achiObj.tiers.length > 1 ?
+                                        <Row>
+                                            <Col xs={4}>Tiers:</Col>
+                                            <Col xs={8}>
+                                                {achiObj.tiers.map((tier, index) =>
+                                                    <Row>
+                                                        <Col>{"Tier " + (index+1) + ": " + tier.count}</Col>
+                                                        <Col>{"Points: " + tier.points}</Col>
+                                                    </Row>
+                                                )}
+                                            </Col>
+                                        </Row>
+                                        : ""}
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Modal.Body>
                         <Modal.Footer>
                         <Button variant="outline-primary" onClick={this.handleClose}>
                             Close
