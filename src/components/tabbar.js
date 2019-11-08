@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import {withRouter, Link} from 'react-router-dom';
 import {Navbar, Nav, Image} from 'react-bootstrap';
 
-// import Achievements from './achievements';
-
 class TabBar extends Component {
     render() {
         return (
