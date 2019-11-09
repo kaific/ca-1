@@ -16,16 +16,9 @@ class Achievements extends Component {
             showModal: false,
         };
 
-        this.setCat = this.setCat.bind(this);
         this.setModalShow = this.setModalShow.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleShow = this.handleShow.bind(this);
-    }
-
-    setCat(cat) {
-        this.setState({
-            category: cat
-        });
     }
     
     // CONTROL SHOW STATE OF ACHIEVEMENT INFO WINDOW
@@ -48,8 +41,6 @@ class Achievements extends Component {
         });
     }
 
-    // API CALL MUST BE EXECUTED VIA FUNCTION FOR USE IN COMPONENTDIDUPDATE()
-    // (OTHERWISE INFINITE LOOP WTIH SETSTATE)
     fetchAchievements(){
         fetch(this.state.url + this.props.category.achievements)
         // CONVERT RESPONSE TO JSON STRING
@@ -67,6 +58,7 @@ class Achievements extends Component {
             }
         )
     }
+
     componentDidMount() {
         if(this.props.category !== null) {
             this.fetchAchievements();
@@ -147,7 +139,7 @@ class Achievements extends Component {
                                             <Col xs={4}>Tiers:</Col>
                                             <Col xs={8}>
                                                 {achiObj.tiers.map((tier, index) =>
-                                                    <Row>
+                                                    <Row key={"tier"+(index+1)}>
                                                         <Col>{"Tier " + (index+1) + ": " + tier.count}</Col>
                                                         <Col>{"Points: " + tier.points}</Col>
                                                     </Row>
@@ -175,7 +167,6 @@ class Achievements extends Component {
                                 achi={achi}
                                 handleClose={this.handleClose}
                                 handleShow={this.handleShow}
-                                // changeAchi={this.changeAchi}
                             />
                         ))}
                     </ListGroup>

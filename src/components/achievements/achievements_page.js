@@ -8,12 +8,13 @@ class AchievementsPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            url: 'https://api.guildwars2.com/v2/achievements',
             category: null,
         };
+        // ALLOW FUNCTIONS ACCESS TO (THIS) OF COMPONENT
         this.setCat = this.setCat.bind(this);
     }
-
+    
+    // CHANGE CURRENT CATEGORY
     setCat(cat) {
         this.setState({
             category: cat
@@ -44,8 +45,7 @@ class AchievementsPage extends Component {
         }  
 
         // DISPLAY DATA IF LOADED
-        else if(this.state.category !== null) {
-            category = this.state.category;
+        else {
             return (
                 <Container className="my-3">
                     <Row className="height-100">
@@ -57,20 +57,8 @@ class AchievementsPage extends Component {
                         </Col>
                         <Col xs={7} md={8} className="scrollable">
                             <Achievements
-                                category={this.state.category}
+                                category={category}
                             />
-                        </Col>
-                    </Row>
-                </Container>
-            );
-        }
-        // IF DATA NOT LOADED
-        else {
-            return (
-                <Container>
-                    <Row>
-                        <Col>
-                            <ProgressBar animated now={90} label={"Loading..."}/>
                         </Col>
                     </Row>
                 </Container>

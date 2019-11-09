@@ -61,7 +61,6 @@ class AchiCategories extends Component {
                         this.setState({
                             categories: result,
                         });
-                        // this.props.setCat(this.state.categories[0]);
                     }
                 )
             },
@@ -102,13 +101,11 @@ class AchiCategories extends Component {
         let {groups, categories, error, activeGroups} = this.state;
         if(error) {
             return (
-                <>
-                    <Row>
-                        <Col md={12}>
-                            Error: {error.message}
-                        </Col>
-                    </Row>
-                </>
+                <Row>
+                    <Col md={12}>
+                        Error: {error.message}
+                    </Col>
+                </Row>
             );
         }
         else if(categories.length > 0 && groups.length > 0) {
